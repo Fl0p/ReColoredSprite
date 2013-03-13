@@ -134,6 +134,8 @@
 		DBEEB2E716EFF59E00B2B426 /* obj_2.png in Resources */ = {isa = PBXBuildFile; fileRef = DBEEB2E216EFF59E00B2B426 /* obj_2.png */; };
 		DBEEB2E816EFF59E00B2B426 /* obj_3.png in Resources */ = {isa = PBXBuildFile; fileRef = DBEEB2E316EFF59E00B2B426 /* obj_3.png */; };
 		DBEEB2E916EFF59E00B2B426 /* obj_4.png in Resources */ = {isa = PBXBuildFile; fileRef = DBEEB2E416EFF59E00B2B426 /* obj_4.png */; };
+		DBEEB2ED16EFF68D00B2B426 /* ReColor.fsh in Sources */ = {isa = PBXBuildFile; fileRef = DBEEB2EA16EFF68D00B2B426 /* ReColor.fsh */; };
+		DBEEB2F716F002FB00B2B426 /* ReColor.fsh in Resources */ = {isa = PBXBuildFile; fileRef = DBEEB2EA16EFF68D00B2B426 /* ReColor.fsh */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -398,6 +400,7 @@
 		DBEEB2E216EFF59E00B2B426 /* obj_2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = obj_2.png; sourceTree = "<group>"; };
 		DBEEB2E316EFF59E00B2B426 /* obj_3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = obj_3.png; sourceTree = "<group>"; };
 		DBEEB2E416EFF59E00B2B426 /* obj_4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = obj_4.png; sourceTree = "<group>"; };
+		DBEEB2EA16EFF68D00B2B426 /* ReColor.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ReColor.fsh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -827,6 +830,7 @@
 		DBEEB2DE16EFF59000B2B426 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				DBEEB2EA16EFF68D00B2B426 /* ReColor.fsh */,
 				DBEEB2D316EFF4C300B2B426 /* AppDelegate.h */,
 				DBEEB2D416EFF4C300B2B426 /* AppDelegate.m */,
 				DBEEB2D616EFF4C300B2B426 /* HelloWorldLayer.h */,
@@ -897,6 +901,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DBEEB2F716F002FB00B2B426 /* ReColor.fsh in Resources */,
 				DBEEB16516EFF4C000B2B426 /* Default.png in Resources */,
 				DBEEB16716EFF4C000B2B426 /* fps_images.png in Resources */,
 				DBEEB16916EFF4C000B2B426 /* fps_images-hd.png in Resources */,
@@ -1025,6 +1030,7 @@
 				DBEEB2D216EFF4C300B2B426 /* main.m in Sources */,
 				DBEEB2D516EFF4C300B2B426 /* AppDelegate.m in Sources */,
 				DBEEB2D816EFF4C300B2B426 /* HelloWorldLayer.m in Sources */,
+				DBEEB2ED16EFF68D00B2B426 /* ReColor.fsh in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

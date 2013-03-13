@@ -1,8 +1,8 @@
 //
 //  HelloWorldLayer.m
-//  ReColoredSprite
+//  RecoloringSprite
 //
-//  Created by Flop on 13/03/2013.
+//  Created by Flop on 13/03/13.
 //  Copyright __MyCompanyName__ 2013. All rights reserved.
 //
 
@@ -10,98 +10,86 @@
 // Import the interfaces
 #import "HelloWorldLayer.h"
 
-// Needed to obtain the Navigation Controller
-#import "AppDelegate.h"
-
-#pragma mark - HelloWorldLayer
+#define RAND_COLOR_COMPONENT (float)(arc4random()%255)/255.0
 
 // HelloWorldLayer implementation
-@implementation HelloWorldLayer
+@implementation HelloWorldLayer {
 
-// Helper class method that creates a Scene with the HelloWorldLayer as the only child.
-+(CCScene *) scene
+    GLuint color_1;
+    GLuint color_2;
+    GLuint color_3;
+}
+
++(CCScene *) sceneWithLastObj:(int)lastObj // new
 {
-	// 'scene' is an autorelease object.
-	CCScene *scene = [CCScene node];
-	
-	// 'layer' is an autorelease object.
-	HelloWorldLayer *layer = [HelloWorldLayer node];
-	
-	// add layer as a child to scene
-	[scene addChild: layer];
-	
-	// return the scene
-	return scene;
+    CCScene *scene = [CCScene node];
+    HelloWorldLayer *layer = [[[HelloWorldLayer alloc] 
+                               initWithLastObj:lastObj] autorelease]; // new
+    [scene addChild: layer];	
+    return scene;
 }
 
 // on "init" you need to initialize your instance
--(id) init
+-(id) initWithLastObj:(int)lastObj
 {
-	// always call "super" init
-	// Apple recommends to re-assign "self" with the "super's" return value
 	if( (self=[super init])) {
-		
-		// create and initialize a Label
-		CCLabelTTF *label = [CCLabelTTF labelWithString:@"Hello World" fontName:@"Marker Felt" fontSize:64];
+        
+        CGSize winSize = [CCDirector sharedDirector].winSize;
+        
+        do {
+            objNum = arc4random() % 4 + 1;
+        } while (objNum == lastObj);
+        
+        NSString * spriteName = [NSString stringWithFormat:@"obj_%d.png", objNum];
+        
+        
+        CCSprite* sprite = [CCSprite spriteWithFile:spriteName];
+        sprite.position = ccp(winSize.width/2, winSize.height/2);
+        sprite.scaleX = 0.5;
+        sprite.scaleY = 0.5;
+        [self addChild:sprite];
 
-		// ask director the the window size
-		CGSize size = [[CCDirector sharedDirector] winSize];
-	
-		// position the label on the center of the screen
-		label.position =  ccp( size.width /2 , size.height/2 );
-		
-		// add the label as a child to this Layer
-		[self addChild: label];
-		
-		
-		
-		//
-		// Leaderboards and Achievements
-		//
-		
-		// Default font size will be 28 points.
-		[CCMenuItemFont setFontSize:28];
-		
-		// Achievement Menu Item using blocks
-		CCMenuItem *itemAchievement = [CCMenuItemFont itemWithString:@"Achievements" block:^(id sender) {
-			
-			
-			GKAchievementViewController *achivementViewController = [[GKAchievementViewController alloc] init];
-			achivementViewController.achievementDelegate = self;
-			
-			AppController *app = (AppController*) [[UIApplication sharedApplication] delegate];
-			
-			[[app navController] presentModalViewController:achivementViewController animated:YES];
-			
-			[achivementViewController release];
-		}
-									   ];
+        // 2
 
-		// Leaderboard Menu Item using blocks
-		CCMenuItem *itemLeaderboard = [CCMenuItemFont itemWithString:@"Leaderboard" block:^(id sender) {
-			
-			
-			GKLeaderboardViewController *leaderboardViewController = [[GKLeaderboardViewController alloc] init];
-			leaderboardViewController.leaderboardDelegate = self;
-			
-			AppController *app = (AppController*) [[UIApplication sharedApplication] delegate];
-			
-			[[app navController] presentModalViewController:leaderboardViewController animated:YES];
-			
-			[leaderboardViewController release];
-		}
-									   ];
-		
-		CCMenu *menu = [CCMenu menuWithItems:itemAchievement, itemLeaderboard, nil];
-		
-		[menu alignItemsHorizontallyWithPadding:20];
-		[menu setPosition:ccp( size.width/2, size.height/2 - 50)];
-		
-		// Add the menu to the layer
-		[self addChild:menu];
-
+        //NSString*  path = [[NSBundle mainBundle] pathForResource:@"CSEEmboss" ofType:@"fsh"];
+        NSString*  path = [[NSBundle mainBundle] pathForResource:@"ReColor" ofType:@"fsh"];
+        const GLchar * fragmentSource = (GLchar*) [[NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil] UTF8String];
+        sprite.shaderProgram = [[CCGLProgram alloc] initWithVertexShaderByteArray:ccPositionTextureA8Color_vert
+                                                          fragmentShaderByteArray:fragmentSource];
+        [sprite.shaderProgram addAttribute:kCCAttributeNamePosition index:kCCVertexAttrib_Position];
+        [sprite.shaderProgram addAttribute:kCCAttributeNameTexCoord index:kCCVertexAttrib_TexCoords];
+        [sprite.shaderProgram link];
+        [sprite.shaderProgram updateUniforms];
+        
+        // 3
+		color_1 = glGetUniformLocation(sprite.shaderProgram->program_, "u_color1");
+		color_2 = glGetUniformLocation(sprite.shaderProgram->program_, "u_color2");
+		color_3 = glGetUniformLocation(sprite.shaderProgram->program_, "u_color3");
+        
+		// 4
+        
+        glUniform3f(color_1, RAND_COLOR_COMPONENT, RAND_COLOR_COMPONENT, RAND_COLOR_COMPONENT);
+        glUniform3f(color_2, RAND_COLOR_COMPONENT, RAND_COLOR_COMPONENT, RAND_COLOR_COMPONENT);
+        glUniform3f(color_3, RAND_COLOR_COMPONENT, RAND_COLOR_COMPONENT, RAND_COLOR_COMPONENT);
+        
+        // 5
+        [sprite.shaderProgram use];
+        
+        
+        self.isTouchEnabled = YES;
 	}
 	return self;
+}
+
+- (void)registerWithTouchDispatcher {
+    [[[CCDirector sharedDirector] touchDispatcher] addTargetedDelegate:self priority:0 swallowsTouches:YES];
+}
+
+- (BOOL)ccTouchBegan:(UITouch *)touch withEvent:(UIEvent *)event {
+    CCScene *scene = [HelloWorldLayer sceneWithLastObj:objNum];
+    [[CCDirector sharedDirector] replaceScene:
+     [CCTransitionZoomFlipAngular transitionWithDuration:1.0 scene:scene]];
+    return TRUE;
 }
 
 // on "dealloc" you need to release all your retained objects
@@ -113,19 +101,5 @@
 	
 	// don't forget to call "super dealloc"
 	[super dealloc];
-}
-
-#pragma mark GameKit delegate
-
--(void) achievementViewControllerDidFinish:(GKAchievementViewController *)viewController
-{
-	AppController *app = (AppController*) [[UIApplication sharedApplication] delegate];
-	[[app navController] dismissModalViewControllerAnimated:YES];
-}
-
--(void) leaderboardViewControllerDidFinish:(GKLeaderboardViewController *)viewController
-{
-	AppController *app = (AppController*) [[UIApplication sharedApplication] delegate];
-	[[app navController] dismissModalViewControllerAnimated:YES];
 }
 @end
