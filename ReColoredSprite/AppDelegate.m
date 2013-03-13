@@ -7,7 +7,7 @@
 //
 
 #import "cocos2d.h"
-
+#import "SimpleAudioEngine.h"
 #import "AppDelegate.h"
 #import "HelloWorldLayer.h"
 
@@ -86,6 +86,9 @@
 	// and add the scene to the stack. The director will run it when it automatically when the view is displayed.
 	[director_ pushScene: [HelloWorldLayer sceneWithLastObj:0]];
 
+    //add some music
+    [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"DubFeral.mp3" loop:YES];
+    
 	return YES;
 }
 
